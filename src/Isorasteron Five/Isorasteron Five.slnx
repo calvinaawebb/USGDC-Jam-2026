@@ -1,0 +1,9 @@
+﻿<Solution>
+  <Project Path="TriInspector.Editor.csproj" />
+  <Project Path="TriInspector.Editor.Samples.csproj" />
+  <Project Path="TriInspector.Editor.Extras.csproj" />
+  <Project Path="TriInspector.csproj" />
+  <Project Path="Assembly-CSharp-firstpass.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+</Solution>
