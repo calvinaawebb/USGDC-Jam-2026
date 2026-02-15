@@ -3,20 +3,25 @@
 public class playerMovement : MonoBehaviour
 {
     public Vector3 direct;
-    public GameObject controlObject;
+    public GameObject legsObject;
+    public GameObject torsoObject;
+    public Vector3 torsoOgRot;
     public GameObject controlVector;
     public GameObject anchor;
+    public GameObject camera;
     public bool up, left, down, right;
     public float speed;
     public float rotationSpeed;
     public bool moveKeysActivated, moveKeysCanRotate;
+    public RaycastHit hit;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        speed = 100f;
+        speed = 250f;
         rotationSpeed = 10f;
         moveKeysActivated = true;
         moveKeysCanRotate = true;
+        torsoOgRot = torsoObject.transform.eulerAngles;
     }
 
     private void Update()
@@ -90,13 +95,25 @@ public class playerMovement : MonoBehaviour
         {
             controlVector.transform.eulerAngles = new Vector3(controlVector.transform.rotation.eulerAngles.x, anchor.transform.rotation.eulerAngles.y - 45f, controlVector.transform.rotation.eulerAngles.z);
         }
+
+        Ray ray = camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+        bool rayCast = Physics.Raycast(ray, out hit);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        controlObject.transform.rotation = Quaternion.Slerp(controlObject.transform.rotation, controlVector.transform.rotation, Time.fixedDeltaTime * rotationSpeed);
-        Vector3 direct = new Vector3(controlObject.transform.forward.x * speed * Time.fixedDeltaTime, 0, controlObject.transform.forward.z * speed * Time.fixedDeltaTime);
-        gameObject.transform.GetComponent<Rigidbody>().linearVelocity = direct;
+        torsoObject.transform.LookAt(hit.point);
+        torsoObject.transform.eulerAngles = new Vector3(torsoOgRot.x, torsoObject.transform.eulerAngles.y, torsoOgRot.z);
+        if (up || down || left || right)
+        {
+            legsObject.transform.rotation = Quaternion.Slerp(legsObject.transform.rotation, controlVector.transform.rotation, Time.fixedDeltaTime * rotationSpeed);
+            Vector3 direct = new Vector3(legsObject.transform.forward.x * speed * Time.fixedDeltaTime, 0, legsObject.transform.forward.z * speed * Time.fixedDeltaTime);
+            gameObject.transform.GetComponent<Rigidbody>().linearVelocity = direct;
+        }
+        else
+        {
+            gameObject.transform.GetComponent<Rigidbody>().linearVelocity /= 4;
+        }
     }
 }
