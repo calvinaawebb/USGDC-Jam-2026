@@ -1,6 +1,5 @@
 ﻿<Solution>
   <Project Path="TriInspector.Editor.csproj" />
-  <Project Path="TriInspector.Editor.Samples.csproj" />
   <Project Path="TriInspector.Editor.Extras.csproj" />
   <Project Path="TriInspector.csproj" />
   <Project Path="Unity.InternalAPIEditorBridge.013.csproj" />
