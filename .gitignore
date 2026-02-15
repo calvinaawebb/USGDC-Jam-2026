@@ -1,9 +1,9 @@
-src/Isorasteron Five/[Ll]ibrary/
-src/Isorasteron Five/[Tt]emp/
-src/Isorasteron Five/[Oo]bj/
-src/Isorasteron Five/[Bb]uild/
-src/Isorasteron Five/[Bb]uilds/
-src/Isorasteron Five/[Ll]ogs/
+/src/Isorasteron Five/[Ll]ibrary/
+/src/Isorasteron Five/[Tt]emp/
+/src/Isorasteron Five/[Oo]bj/
+/src/Isorasteron Five/[Bb]uild/
+/src/Isorasteron Five/[Bb]uilds/
+/src/Isorasteron Five/[Ll]ogs/
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # [Aa]ssets/AssetStoreTools*
@@ -48,38 +48,41 @@ src/Isorasteron Five/UserSettings/
 *.unitypackage
 
 # Crashlytics generated file
-src/Isorasteron Five/crashlytics-build.properties
+/src/Isorasteron Five/crashlytics-build.properties
 
 # Packed Addressables
-src/Isorasteron Five/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+/src/Isorasteron Five/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 
 # Temporary auto-generated Android Assets
-src/Isorasteron Five/[Aa]ssets/[Ss]treamingAssets/aa.meta
-src/Isorasteron Five/[Aa]ssets/[Ss]treamingAssets/aa/*
+/src/Isorasteron Five/[Aa]ssets/[Ss]treamingAssets/aa.meta
+/src/Isorasteron Five/[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Never ignore DLLs in the FMOD subfolder.
-!src/Isorasteron Five/[Aa]ssets/Plugins/FMOD/**/lib/*
+!/src/Isorasteron Five/[Aa]ssets/Plugins/FMOD/**/lib/*
 
 # Don't ignore images and gizmos used by FMOD in the Unity Editor.
-!src/Isorasteron Five/[Aa]ssets/Gizmos/FMOD/*
-!src/Isorasteron Five/[Aa]ssets/Editor Default Resources/FMOD/*
+!/src/Isorasteron Five/[Aa]ssets/Gizmos/FMOD/*
+!/src/Isorasteron Five/[Aa]ssets/Editor Default Resources/FMOD/*
 
 # Ignore the Cache folder since it is updated locally.
-src/Isorasteron Five/[Aa]ssets/Plugins/FMOD/Cache/*
-src/Isorasteron Five/[Aa]ssets/FMOD/.cache/*
+/src/Isorasteron Five/[Aa]ssets/Plugins/FMOD/Cache/*
+/src/Isorasteron Five/[Aa]ssets/FMOD/.cache/*
 
 # Ignore bank files in the StreamingAssets folder.
-src/Isorasteron Five/[Aa]ssets/StreamingAssets/**/*.bank
-src/Isorasteron Five/[Aa]ssets/StreamingAssets/**/*.bank.meta
+/src/Isorasteron Five/[Aa]ssets/StreamingAssets/**/*.bank
+/src/Isorasteron Five/[Aa]ssets/StreamingAssets/**/*.bank.meta
 
 # If the source bank files are kept outside of the StreamingAssets folder then these can be ignored.
 # Log files can be ignored.
-src/Isorasteron Five/fmod_editor.log
-src/Isorasteron Five/UserSettings/Layouts/default-6000.dwlt
-src/Isorasteron Five/UserSettings/EditorUserSettings.asset
+/src/Isorasteron Five/fmod_editor.log
+/src/Isorasteron Five/UserSettings/Layouts/default-6000.dwlt
+/src/Isorasteron Five/UserSettings/EditorUserSettings.asset
 
 # MAC USER
 .DS_Store
 **/.DS_Store
-src/Isorasteron Five/Assets/settings.json
-src/Isorasteron Five/Assets/settings.json.meta
+/src/Isorasteron Five/Assets/settings.json
+/src/Isorasteron Five/Assets/settings.json.meta
+/src/Isorasteron Five/UserSettings/Search.settings
+/src/Isorasteron Five/UserSettings/EditorUserSettings.asset
+/src/Isorasteron Five/UserSettings/Layouts/default-6000.dwlt
