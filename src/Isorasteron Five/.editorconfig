@@ -690,3 +690,4 @@ dotnet_diagnostic.IDE0270.severity = none      # IDE0270: Null check can be simp
 dotnet_diagnostic.IDE0029.severity = none      # IDE0029: Null check can be simplified
 dotnet_diagnostic.RCS1084.severity = none      # RCS1084: Use coalesce expression instead of conditional expression
 dotnet_diagnostic.RCS1206.severity = none      # RCS1206: Use conditional access instead of conditional expression
+dotnet_diagnostic.UNT0039.severity = none      # UNT0039: Use RequireComponent attribute when self-invoking GetComponent
