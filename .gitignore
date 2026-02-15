@@ -83,3 +83,5 @@ src/Isorasteron Five/UserSettings/
 **/.DS_Store
 /src/Isorasteron Five/Assets/settings.json
 /src/Isorasteron Five/Assets/settings.json.meta
+/src/Isorasteron Five/UserSettings/Search.settings
+/src/Isorasteron Five/UserSettings/EditorUserSettings.asset
