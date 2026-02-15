@@ -212,6 +212,24 @@ csharp_style_namespace_declarations = block_scoped:silent
 ##########################################
 # Styles
 ##########################################
+# Enforce CamelCase for variables and public properties
+dotnet_naming_rule.public_property_or_field_camel_case = true
+dotnet_naming_rule.public_property_or_field_camel_case.severity = error
+dotnet_naming_rule.public_property_or_field_camel_case.symbols = public_property_or_field
+dotnet_naming_rule.public_property_or_field_camel_case.style = camel_case
+
+# Enforce CamelCase for class names
+dotnet_naming_rule.class_camel_case = true
+dotnet_naming_rule.class_camel_case.severity = error
+dotnet_naming_rule.class_camel_case.symbols = class
+dotnet_naming_rule.class_camel_case.style = camel_case
+
+# Define the naming style for CamelCase
+dotnet_naming_style.camel_case = required_word_casing = camel_case
+
+# Symbol definitions (e.g., public property, field, or class)
+dotnet_naming_symbols.public_property_or_field = symbol_kind == "property" && accessibility == "public"
+dotnet_naming_symbols.class = symbol_type == "class"
 ##########################################
 # .NET Naming Rules
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/naming-rules
