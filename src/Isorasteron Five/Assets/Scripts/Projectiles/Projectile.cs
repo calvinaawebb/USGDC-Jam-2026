@@ -63,6 +63,7 @@ namespace Assets.Scripts.Projectiles
         private float maxSpeed;
         private float minSpeed;
         private int currentDurability;
+        private Vector3 initialLocalScale;
 
         private List<Collider> ignoredColliders;
 
@@ -80,6 +81,8 @@ namespace Assets.Scripts.Projectiles
             {
                 Debug.LogError("Projectile requires a Collider!", this);
             }
+
+            initialLocalScale = transform.localScale;
         }
 
         private void FixedUpdate()
@@ -118,13 +121,23 @@ namespace Assets.Scripts.Projectiles
         private void OnDisable()
         {
             CancelInvoke(nameof(HandleExpire));
+            if (rigidbody != null)
+            {
+                rigidbody.linearVelocity = Vector3.zero;
+                rigidbody.angularVelocity = Vector3.zero;
+            }
         }
         #endregion
 
         #region Public Members
-        public void Initialize(Vector3 direction, float speed, float sizeMultiplier, float acceleration, float maxSpeed, float minSpeed, ProjectileEmitter owner, GameObject source = null)
+        public void Initialize(Vector3 direction, float speed, float sizeMultiplier, float acceleration, float maxSpeed, float minSpeed, ProjectileEmitter owner, GameObject source = null, Quaternion? spawnRotation = null)
         {
-            transform.localScale = Vector3.one * sizeMultiplier;
+            transform.localScale = initialLocalScale * sizeMultiplier;
+
+            if (spawnRotation.HasValue)
+            {
+                transform.rotation = spawnRotation.Value;
+            }
             this.direction = direction.normalized;
             this.acceleration = acceleration;
             this.maxSpeed = maxSpeed;
@@ -140,9 +153,9 @@ namespace Assets.Scripts.Projectiles
 
             if (rigidbody != null)
             {
-                UpdateSpeed(false);
                 rigidbody.collisionDetectionMode = UseContinuousCollision ? CollisionDetectionMode.ContinuousDynamic : CollisionDetectionMode.Discrete;
                 rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+                rigidbody.linearVelocity = direction * speed;
             }
 
             IgnoreSourceCollisions();

@@ -22,6 +22,7 @@ namespace Assets.Scripts
         private T CreateNew()
         {
             T instance = Object.Instantiate(prefab, parent);
+            instance.gameObject.hideFlags = HideFlags.HideInHierarchy;
             instance.gameObject.SetActive(false);
             return instance;
         }
@@ -30,16 +31,19 @@ namespace Assets.Scripts
         {
             if (items.Count == 0)
             {
+                // Something about this seems fucky
                 items.Push(CreateNew());
             }
 
             T item = items.Pop();
             item.gameObject.SetActive(true);
+            item.gameObject.hideFlags = HideFlags.None;
             return item;
         }
 
         public void Return(T item)
         {
+            item.gameObject.hideFlags = HideFlags.HideInHierarchy;
             item.gameObject.SetActive(false);
             items.Push(item);
         }

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Assets.Scripts.Projectiles;
+using UnityEngine;
 
 public class playerMovement : MonoBehaviour
 {
@@ -9,10 +11,11 @@ public class playerMovement : MonoBehaviour
     public GameObject controlVector;
     public GameObject anchor;
     public GameObject camera;
+    public ProjectileEmitter weaponEmitter;
     public bool up, left, down, right;
     public float speed;
     public float rotationSpeed;
-    public bool moveKeysActivated, moveKeysCanRotate;
+    public bool moveKeysActivated, moveKeysCanRotate, canAttack;
     public RaycastHit hit;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,7 +24,11 @@ public class playerMovement : MonoBehaviour
         rotationSpeed = 10f;
         moveKeysActivated = true;
         moveKeysCanRotate = true;
+        canAttack = true;
         torsoOgRot = torsoObject.transform.eulerAngles;
+
+        // Necessary so the projectile can't hit the player
+        weaponEmitter.SetParent(gameObject);
     }
 
     private void Update()
@@ -62,6 +69,16 @@ public class playerMovement : MonoBehaviour
             right = false;
         }
 
+        if (Input.GetMouseButtonDown(0) && canAttack)
+        {
+            weaponEmitter.ToggleFire(true);
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            weaponEmitter.ToggleFire(false);
+        }
+
         if (left && !(up || down) && moveKeysCanRotate)
         {
             controlVector.transform.eulerAngles = new Vector3(controlVector.transform.rotation.eulerAngles.x, anchor.transform.rotation.eulerAngles.y - 90f, controlVector.transform.rotation.eulerAngles.z);
@@ -96,6 +113,7 @@ public class playerMovement : MonoBehaviour
             controlVector.transform.eulerAngles = new Vector3(controlVector.transform.rotation.eulerAngles.x, anchor.transform.rotation.eulerAngles.y - 45f, controlVector.transform.rotation.eulerAngles.z);
         }
 
+        Debug.Log(Input.mousePosition);
         Ray ray = camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
         bool rayCast = Physics.Raycast(ray, out hit);
     }

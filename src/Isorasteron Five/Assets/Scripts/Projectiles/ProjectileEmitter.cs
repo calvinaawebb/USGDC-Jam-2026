@@ -125,7 +125,7 @@ namespace Assets.Scripts.Projectiles
                 return;
             }
 
-            nextFireTime = Time.time + (1f / currentFireRate);
+            nextFireTime = Time.time + (1f / Mathf.Max(0.001f, currentFireRate));
 
             if (Burst)
             {
@@ -158,30 +158,36 @@ namespace Assets.Scripts.Projectiles
 
         private void SpawnProjectile(float spawnAngle)
         {
-            Quaternion rotation = Quaternion.Euler(0, spawnAngle, 0);
+            float baseYaw = ProjectileOrigin != null ? ProjectileOrigin.eulerAngles.y : transform.eulerAngles.y;
+            float worldYaw = baseYaw + spawnAngle;
+            Quaternion rotation = Quaternion.Euler(0f, worldYaw, 0f);
             Vector3 direction = rotation * Vector3.forward;
+            Vector3 position = ProjectileOrigin != null ? ProjectileOrigin.position : transform.position;
 
             Projectile projectile;
             if (pool != null)
             {
                 projectile = pool.Get();
+                projectile.transform.SetParent(null, true);
                 projectile.transform.SetPositionAndRotation(ProjectileOrigin != null ? ProjectileOrigin.position : transform.position, rotation);
                 projectile.SetPoolReturnAction(projectile => pool.Return(projectile));
             }
             else
             {
+                // TODO this part seems to get wonky
                 projectile = Instantiate(ProjectilePrefab, ProjectileOrigin != null ? ProjectileOrigin.position : transform.position, rotation);
+                projectile.transform.SetParent(null, true);
                 projectile.SetPoolReturnAction(null);
             }
 
             projectile.Initialize(direction, ProjectileSpeed, ProjectileSizeMultiplier, ProjectileAcceleration, MaxProjectileSpeed, MinProjectileSpeed, this, parent);
         }
 
-        private void OnDrawGizmosSelected()
+        private void OnDrawGizmos()
         {
             if (!Application.isPlaying)
             {
-                currentFireRate = FireRate;
+                currentFireRate = Mathf.Max(0.001f, FireRate);
             }
 
             int totalShots = Mathf.Max(1, 1 + Mathf.FloorToInt(Multishot));
@@ -190,7 +196,7 @@ namespace Assets.Scripts.Projectiles
             {
                 float offsetAngle = Angle + ((i - half) * MultishotAngle);
                 Quaternion rotation = Quaternion.Euler(0f, offsetAngle, 0f);
-                Vector3 direction = rotation * Vector3.forward;
+                Vector3 direction = rotation * Vector3.back;
                 Gizmos.color = Color.yellow;
                 Vector3 origin = ProjectileOrigin != null ? ProjectileOrigin.position : transform.position;
                 Gizmos.DrawRay(origin, direction * 2f);
