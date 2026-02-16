@@ -1,8 +1,10 @@
 ﻿using System.Collections;
+using Assets.Scripts;
 using Assets.Scripts.Audio;
 using FMODUnity;
 using TriInspector;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets.Scripts.Projectiles
 {
@@ -38,11 +40,18 @@ namespace Assets.Scripts.Projectiles
         public float MultishotAngle = 5f;
 
         [Header("Projectile")]
+        public int ProjectileDamage = 1;
         [Range(0.1f, 10f)] public float ProjectileSizeMultiplier = 1f;
         [Unit("m/s")] public float ProjectileSpeed = 1f;
         [Unit("m/s²")] public float ProjectileAcceleration = 0f;
         [Unit("m/s")] public float MaxProjectileSpeed = 1f;
         [Unit("m/s")] public float MinProjectileSpeed = 1f;
+
+        [Header("Events")]
+        public UnityEvent<Projectile, Collision> OnHit;
+        public UnityEvent<Projectile, Collision> OnBounce;
+        public UnityEvent<Projectile> OnExpire;
+        public UnityEvent OnDestroyed;
 
         [Header("Sound")]
         [Tooltip("FMOD EventReference for when the emitter initially fires")]
@@ -153,7 +162,7 @@ namespace Assets.Scripts.Projectiles
             {
                 float offsetAngle = Angle + ((i - ((totalShots - 1) / 2f)) * MultishotAngle);
                 SpawnProjectile(offsetAngle);
-            }           
+            }
         }
 
         private void SpawnProjectile(float spawnAngle)
@@ -169,18 +178,23 @@ namespace Assets.Scripts.Projectiles
             {
                 projectile = pool.Get();
                 projectile.transform.SetParent(null, true);
-                projectile.transform.SetPositionAndRotation(ProjectileOrigin != null ? ProjectileOrigin.position : transform.position, rotation);
+                projectile.transform.SetPositionAndRotation(position, rotation);
                 projectile.SetPoolReturnAction(projectile => pool.Return(projectile));
             }
             else
             {
-                // TODO this part seems to get wonky
-                projectile = Instantiate(ProjectilePrefab, ProjectileOrigin != null ? ProjectileOrigin.position : transform.position, rotation);
+                projectile = Instantiate(ProjectilePrefab, position, rotation);
                 projectile.transform.SetParent(null, true);
                 projectile.SetPoolReturnAction(null);
             }
 
-            projectile.Initialize(direction, ProjectileSpeed, ProjectileSizeMultiplier, ProjectileAcceleration, MaxProjectileSpeed, MinProjectileSpeed, this, parent);
+            projectile.Initialize(direction, ProjectileSpeed, ProjectileSizeMultiplier, ProjectileAcceleration, MaxProjectileSpeed, MinProjectileSpeed, ProjectileDamage, this, parent, rotation);
+
+            // Hook up emitter-level events if desired
+            projectile.OnHit.AddListener((proj, col) => OnHit?.Invoke(proj, col));
+            projectile.OnBounce.AddListener((proj, col) => OnBounce?.Invoke(proj, col));
+            projectile.OnExpire.AddListener((proj) => OnExpire?.Invoke(proj));
+            projectile.OnDestroyed.AddListener(() => OnDestroyed?.Invoke());
         }
 
         private void OnDrawGizmos()

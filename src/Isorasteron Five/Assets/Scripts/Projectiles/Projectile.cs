@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Scripts.Audio;
+using Assets.Scripts.Entities;
 using FMODUnity;
 using TriInspector;
 using UnityEngine;
@@ -8,7 +9,6 @@ using UnityEngine.Events;
 
 namespace Assets.Scripts.Projectiles
 {
-    // If you need advanced behavior, inherit projectile and replace the behaviors
     public class Projectile : MonoBehaviour
     {
         [Header("Projectile")]
@@ -19,7 +19,6 @@ namespace Assets.Scripts.Projectiles
         [ShowIf(nameof(Bounces))] public bool BouncesAffectDurability = false;
         [Tooltip("Which layers the projectile will bounce off of")]
         [ShowIf(nameof(Bounces))] public LayerMask BounceLayers;
-        [Tooltip("How much speed is kept per bounce, 1 = 100%")]
         [ShowIf(nameof(Bounces)), Range(0f, 1f)] public float BounceEnergyRetention = 1f;
 
         [Tooltip("How long the projectile lasts before expiring, in seconds"), Unit("secs")]
@@ -33,10 +32,10 @@ namespace Assets.Scripts.Projectiles
         public bool IgnoreSelf = true;
 
         [Header("Events")]
-        public UnityEvent<Projectile, Collision> OnHit;
-        public UnityEvent<Projectile, Collision> OnBounce;
-        public UnityEvent<Projectile> OnExpire;
-        public UnityEvent OnDestroyed;
+        public UnityEvent<Projectile, Collision> OnHit = new UnityEvent<Projectile, Collision>();
+        public UnityEvent<Projectile, Collision> OnBounce = new UnityEvent<Projectile, Collision>();
+        public UnityEvent<Projectile> OnExpire = new UnityEvent<Projectile>();
+        public UnityEvent OnDestroyed = new UnityEvent();
 
         [Header("Audio")]
         [Tooltip("FMOD EventReference for when the projectile hits something")]
@@ -66,6 +65,9 @@ namespace Assets.Scripts.Projectiles
         private Vector3 initialLocalScale;
 
         private List<Collider> ignoredColliders;
+
+        // NEW: damage stored on projectile
+        private int damage;
 
         #region Unity
         private void Awake()
@@ -111,7 +113,17 @@ namespace Assets.Scripts.Projectiles
                 return;
             }
 
+            Entity hitEntity = collision.collider.GetComponentInParent<Entity>();
+            if (hitEntity != null)
+            {
+                if (!IsSourceOrChildOf(hitEntity.gameObject, source))
+                {
+                    hitEntity.HurtEntity(damage);
+                }
+            }
+
             OnHit?.Invoke(this, collision);
+
             if (DestroyOnHit)
             {
                 HandleHit();
@@ -130,7 +142,7 @@ namespace Assets.Scripts.Projectiles
         #endregion
 
         #region Public Members
-        public void Initialize(Vector3 direction, float speed, float sizeMultiplier, float acceleration, float maxSpeed, float minSpeed, ProjectileEmitter owner, GameObject source = null, Quaternion? spawnRotation = null)
+        public void Initialize(Vector3 direction, float speed, float sizeMultiplier, float acceleration, float maxSpeed, float minSpeed, int damage, ProjectileEmitter owner, GameObject source = null, Quaternion? spawnRotation = null)
         {
             transform.localScale = initialLocalScale * sizeMultiplier;
 
@@ -138,6 +150,7 @@ namespace Assets.Scripts.Projectiles
             {
                 transform.rotation = spawnRotation.Value;
             }
+
             this.direction = direction.normalized;
             this.acceleration = acceleration;
             this.maxSpeed = maxSpeed;
@@ -145,6 +158,7 @@ namespace Assets.Scripts.Projectiles
             this.speed = speed;
             this.owner = owner;
             this.source = source;
+            this.damage = Math.Max(0, damage);
 
             currentDurability = Durability;
 
@@ -178,10 +192,9 @@ namespace Assets.Scripts.Projectiles
                 return;
             }
 
-
             if (ignoredColliders == null)
             {
-                ignoredColliders = new(4);
+                ignoredColliders = new List<Collider>(4);
             }
             else
             {
@@ -190,7 +203,7 @@ namespace Assets.Scripts.Projectiles
 
             if (source.TryGetComponent(out Collider sourceCollider))
             {
-                ignoredColliders.Add(sourceCollider); 
+                ignoredColliders.Add(sourceCollider);
             }
 
             Collider[] children = source.GetComponentsInChildren<Collider>();
@@ -303,6 +316,29 @@ namespace Assets.Scripts.Projectiles
             direction = Vector3.Reflect(direction, normal).normalized;
             speed *= BounceEnergyRetention;
             UpdateSpeed(false);
+        }
+
+        /// <summary>
+        /// Return true if candidate is the source or a child of the source
+        /// </summary>
+        private bool IsSourceOrChildOf(GameObject candidate, GameObject possibleSource)
+        {
+            if (possibleSource == null || candidate == null)
+            {
+                return false;
+            }
+
+            if (candidate == possibleSource)
+            {
+                return true;
+            }
+
+            if (candidate.transform.IsChildOf(possibleSource.transform))
+            {
+                return true;
+            }
+
+            return false;
         }
         #endregion
     }
