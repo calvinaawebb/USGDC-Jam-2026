@@ -2,7 +2,7 @@
 
 public class cameraMovement : MonoBehaviour
 {
-    public GameObject camera;
+    public new GameObject camera;
     public GameObject player;
     void Start()
     {

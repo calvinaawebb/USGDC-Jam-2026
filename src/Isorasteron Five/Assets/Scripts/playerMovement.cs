@@ -1,5 +1,4 @@
-﻿using System;
-using Assets.Scripts.Projectiles;
+﻿using Assets.Scripts.Projectiles;
 using UnityEngine;
 
 public class playerMovement : MonoBehaviour
@@ -10,7 +9,7 @@ public class playerMovement : MonoBehaviour
     public Vector3 torsoOgRot;
     public GameObject controlVector;
     public GameObject anchor;
-    public GameObject camera;
+    public new GameObject camera;
     public ProjectileEmitter weaponEmitter;
     public bool up, left, down, right;
     public float speed;
